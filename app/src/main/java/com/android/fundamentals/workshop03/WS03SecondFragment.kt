@@ -23,10 +23,21 @@ class WS03SecondFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        count = savedInstanceState?.getInt("count") ?: 0
+        backgroundColor = BackgroundColor.values()[savedInstanceState?.getInt("backgroundColor") ?: 0]
+
         tvValue = view.findViewById<TextView>(R.id.tv_value).apply {
             text = "$count"
+            if (savedInstanceState?.containsKey("backgroundColor") == true)
+                background = ContextCompat.getDrawable(context, backgroundColor.resId)
         }
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("count", count)
+        outState.putInt("backgroundColor", backgroundColor.ordinal)
     }
 
     fun increaseValue() {
