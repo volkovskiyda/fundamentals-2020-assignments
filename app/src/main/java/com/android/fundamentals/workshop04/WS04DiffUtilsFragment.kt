@@ -40,14 +40,11 @@ class WS04DiffUtilsFragment : Fragment() {
 
     private fun updateData() {
         adapter.bindActors(ActorsDataSource().getActors())
-        adapter.notifyDataSetChanged()
     }
 
     private fun shuffleActors() {
         val shuffledList: List<Actor> = ActorsDataSource().getActors().shuffled()
         adapter.bindActors(shuffledList)
-        // TODO: Replace notifyDataSetChanged for updating the recyclerView to DiffUtil.Callback.
-        adapter.notifyDataSetChanged()
     }
 
     companion object {

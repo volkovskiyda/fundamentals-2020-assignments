@@ -5,13 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.android.fundamentals.R
 import com.android.fundamentals.data.models.Actor
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
-class WS04ActorsAdapter : RecyclerView.Adapter<DataViewHolder>() {
+class WS04ActorsAdapter : ListAdapter<Actor, DataViewHolder>(ActorDiffUtil) {
 
     private var actors: List<Actor> = listOf()
 
@@ -29,6 +31,7 @@ class WS04ActorsAdapter : RecyclerView.Adapter<DataViewHolder>() {
 
     fun bindActors(newActors: List<Actor>) {
         actors = newActors
+        submitList(actors)
     }
 }
 
@@ -56,6 +59,14 @@ class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             actor.hasOscar.toString()
         )
     }
+}
+
+object ActorDiffUtil : DiffUtil.ItemCallback<Actor>() {
+    override fun areItemsTheSame(oldItem: Actor, newItem: Actor): Boolean =
+        oldItem.name == newItem.name
+
+    override fun areContentsTheSame(oldItem: Actor, newItem: Actor): Boolean =
+        oldItem == newItem
 }
 
 private val RecyclerView.ViewHolder.context

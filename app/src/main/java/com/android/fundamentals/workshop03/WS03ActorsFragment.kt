@@ -13,7 +13,7 @@ import com.android.fundamentals.domain.ActorsDataSource
 import com.google.android.material.snackbar.Snackbar
 
 
-class WS03ActorsFragment : Fragment() {
+class WS03ActorsFragment : Fragment(), ActorClickListener {
 
     private var recycler: RecyclerView? = null
 
@@ -29,7 +29,7 @@ class WS03ActorsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recycler = view.findViewById(R.id.rv_actors)
         //TODO 5: pass click listener to adapter
-        recycler?.adapter = WS03ActorsAdapter()
+        recycler?.adapter = WS03ActorsAdapter(this)
     }
 
     override fun onStart() {
@@ -48,6 +48,10 @@ class WS03ActorsFragment : Fragment() {
         (recycler?.adapter as? WS03ActorsAdapter)?.apply {
             bindActors(ActorsDataSource().getActors())
         }
+    }
+
+    override fun onClick(actor: Actor) {
+        doOnClick(actor)
     }
 
     private fun doOnClick(actor: Actor) {

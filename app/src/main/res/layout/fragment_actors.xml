@@ -30,6 +30,7 @@
       app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
       app:layout_constraintTop_toBottomOf="@+id/tv_list_header"
       app:layout_constraintBottom_toBottomOf="parent"
+      tools:listitem="@layout/item_actors_data"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       />

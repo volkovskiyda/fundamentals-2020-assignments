@@ -10,9 +10,10 @@ import com.android.fundamentals.R
 import com.android.fundamentals.data.models.Actor
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import kotlin.math.max
 
 //TODO 2: make listener constructor parameter
-class WS03ActorsAdapter: RecyclerView.Adapter<ActorsViewHolder>() {
+class WS03ActorsAdapter(private val actorClickListener: ActorClickListener): RecyclerView.Adapter<ActorsViewHolder>() {
 
     private var actors = listOf<Actor>()
 
@@ -40,14 +41,16 @@ class WS03ActorsAdapter: RecyclerView.Adapter<ActorsViewHolder>() {
     override fun onBindViewHolder(holder: ActorsViewHolder, position: Int) {
         when (holder) {
             is DataViewHolder -> {
-                holder.onBind(actors[position])
+                val actor = actors[position]
+                holder.onBind(actor)
+                holder.itemView.setOnClickListener { actorClickListener.onClick(actor) }
                 //TODO 3: set onClick listener to binded view
             }
             is EmptyViewHolder -> { /* nothing to bind */ }
         }
     }
 
-    override fun getItemCount(): Int = actors.size
+    override fun getItemCount(): Int = max(1, actors.size)
 
     fun bindActors(newActors: List<Actor>) {
         actors = newActors
@@ -91,6 +94,10 @@ private val RecyclerView.ViewHolder.context
 
 private const val VIEW_TYPE_EMPTY = 0
 private const val VIEW_TYPE_ACTORS = 1
+
+interface ActorClickListener {
+    fun onClick(actor: Actor)
+}
 
 /*TODO 1: create interface of clickListener with method
          fun onClick(actor: Actor)
