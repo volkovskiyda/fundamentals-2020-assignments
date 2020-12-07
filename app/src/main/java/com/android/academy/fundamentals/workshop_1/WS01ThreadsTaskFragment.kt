@@ -1,6 +1,9 @@
 package com.android.academy.fundamentals.workshop_1
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -13,6 +16,7 @@ class WS01ThreadsTaskFragment: Fragment(R.layout.fragment_ws_01) {
     private var threadTextView : TextView? = null
 
     //TODO(WS1:2) Create a private val handler and set yours
+    private val handler = MyHandler()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         findViews(view)
@@ -35,16 +39,42 @@ class WS01ThreadsTaskFragment: Fragment(R.layout.fragment_ws_01) {
 
     private fun startThread() {
         printMessage(getString(R.string.wait))
+        MyThread().start()
         //TODO(WS1:5) create your thread and start it
     }
 
     private fun startRunnable() {
         printMessage(getString(R.string.wait))
+        Thread(MyRunnable()).start()
         //TODO(WS1:8) create your runnable and start it
     }
 
     private fun printMessage(mes: String){
         threadTextView?.text =  mes
+    }
+
+    inner class MyHandler : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            printMessage(msg.data.getString(MESSAGE_KEY, ""))
+        }
+    }
+
+    inner class MyThread : Thread() {
+        override fun run() {
+            sleep(6_000)
+            val message = Message()
+            message.data.putString(MESSAGE_KEY, "MyThread")
+            handler.sendMessage(message)
+        }
+    }
+
+    inner class MyRunnable : Runnable {
+        override fun run() {
+            Thread.sleep(4000)
+            val message = Message()
+            message.data.putString(MESSAGE_KEY, "MyRunnable")
+            handler.sendMessage(message)
+        }
     }
 
     //TODO(WS1:1) Create inner class Handler
