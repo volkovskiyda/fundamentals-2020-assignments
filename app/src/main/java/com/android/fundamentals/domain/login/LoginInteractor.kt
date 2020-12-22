@@ -10,9 +10,9 @@ class LoginInteractor(private val dispatcher: CoroutineDispatcher) {
         withContext(dispatcher) {
             delay(DELAY_MILLIS)
             when {
-                userName.isEmpty() -> LoginResult.Error.UserName()
-                password.isEmpty() -> LoginResult.Error.Password()
-                else -> LoginResult.Success()
+                userName.isEmpty() -> LoginResult.Error.UserName
+                password.isEmpty() -> LoginResult.Error.Password
+                else -> LoginResult.Success
             }
         }
 

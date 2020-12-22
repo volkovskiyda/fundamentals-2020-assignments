@@ -2,6 +2,8 @@ package com.android.fundamentals.workshop03
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,7 +37,9 @@ class Workshop3Fragment : Fragment(R.layout.fragment_workshop_3) {
         initViews(view)
         setUpLocationsAdapter()
         setUpListeners()
-    
+        viewModel.loading.observe(viewLifecycleOwner, ::setLoading)
+        viewModel.locations.observe(viewLifecycleOwner, ::updateAdapter)
+
         // TODO 06: Subscribe on public LiveDatas from viewModel:
         //  first with "List<Location>", second with "Boolean" loading state.
         //  Use observe() method of LiveData.
@@ -56,6 +60,8 @@ class Workshop3Fragment : Fragment(R.layout.fragment_workshop_3) {
     private fun setLoading(loading: Boolean) {
         //TODO 01: Make "loader" visible/gone = loading
         // and opposite "addBtn" visible/gone = !loading.
+        addBtn?.isInvisible = loading
+        loader?.isVisible = loading
     }
 
     private fun initViews(view: View) {
@@ -72,22 +78,22 @@ class Workshop3Fragment : Fragment(R.layout.fragment_workshop_3) {
     private fun setUpListeners() {
         addBtn?.setOnClickListener {
             // TODO 02: Change this "addNew()" with "viewModel addNew()" method.
-            addNew()
+            viewModel.addNew()
         }
     }
 
     // TODO 08: Remove this method.
-    private fun addNew() {
-        mainScope.launch {
-            setLoading(loading = true)
-
-            val newLocation = generator.generateNewLocation()
-            locations.add(newLocation)
-            updateAdapter(locations)
-
-            setLoading(loading = false)
-        }
-    }
+//    private fun addNew() {
+//        mainScope.launch {
+//            setLoading(loading = true)
+//
+//            val newLocation = generator.generateNewLocation()
+//            locations.add(newLocation)
+//            updateAdapter(locations)
+//
+//            setLoading(loading = false)
+//        }
+//    }
     
     private fun updateAdapter(locations: List<Location>) {
         locationsAdapter.submitList(locations)

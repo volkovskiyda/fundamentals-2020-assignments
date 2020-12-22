@@ -1,7 +1,10 @@
 package com.android.fundamentals.workshop03
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.fundamentals.domain.location.Location
 import com.android.fundamentals.domain.location.LocationGenerator
 import kotlinx.coroutines.launch
 
@@ -11,9 +14,13 @@ class Workshop3ViewModel(
     
     //TODO 03: Create private property MutableLiveData<boolean>
     // and public getter LiveData<boolean> for loading state (false).
+    private val _loading = MutableLiveData(false)
+    val loading: LiveData<Boolean> = _loading
 
     //TODO 04: Create private property MutableLiveData<List<Location>>
     // and public getter LiveData for locations (emptyList()).
+    private val _locations = MutableLiveData(emptyList<Location>())
+    val locations: LiveData<List<Location>> = _locations
 
     fun addNew() {
         viewModelScope.launch {
@@ -23,6 +30,12 @@ class Workshop3ViewModel(
             // - get the previous value from mutable live data;
             // - add (.plus()) a new location to the collection;
             // - set updated collection back to the private livedata's value.
+            _loading.value = true
+
+            val newLocation = generator.generateNewLocation()
+            _locations.value = _locations.value.orEmpty() + newLocation
+
+            _loading.value = false
         }
     }
 }

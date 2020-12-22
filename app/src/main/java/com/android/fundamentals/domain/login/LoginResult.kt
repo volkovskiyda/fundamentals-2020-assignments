@@ -2,12 +2,12 @@ package com.android.fundamentals.domain.login
 
 sealed class LoginResult {
 
-    class Success : LoginResult()
+    object Success : LoginResult()
 
     sealed class Error : LoginResult() {
 
-        class UserName : Error()
+        object UserName : Error()
 
-        class Password : Error()
+        object Password : Error()
     }
 }
