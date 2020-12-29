@@ -23,4 +23,4 @@ open class BaseFragment : Fragment() {
 	fun createCoroutineScope() = CoroutineScope(Job() + Dispatchers.IO)
 }
 
-const val apiKey = "753009e5-1ad5-44dc-9cc0-ae43b4c6f8ce"
+const val apiKey = "93f1c0e9-bbbd-46ae-a6b8-1850a8706a7d"

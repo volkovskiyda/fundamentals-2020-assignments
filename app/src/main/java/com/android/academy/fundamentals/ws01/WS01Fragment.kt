@@ -59,9 +59,12 @@ class WS01Fragment : BaseFragment() {
 				//  - Obtain the following params from "response" and pass them to the createCatImageResult(...)
 				//  	\___ code, headers, message, body?.string()
 //				this.
+				execute().use { response ->
+					createCatImageResult(response.code, response.headers, response.message, response.body?.string())
+				}
 				
 				// TODO 04: remove CatImageResult()
-				CatImageResult()
+//				CatImageResult()
 				
 			}.onFailure {
 				handleCallError(it)
@@ -102,7 +105,15 @@ class WS01Fragment : BaseFragment() {
 			//  - Callback has two functions: "onFailure(...)" and "onResponse(...)"
 			//  - Place "asyncOnFailureFunction(e)" inside the "onFailure(...)"
 			//  - Place "asyncOnResponseFunction(response)" inside the "onResponse(...)"
-			createGetImageCall()
+			createGetImageCall().enqueue(object : Callback {
+				override fun onFailure(call: Call, e: IOException) {
+					asyncOnFailureFunction(e)
+				}
+
+				override fun onResponse(call: Call, response: Response) {
+					asyncOnResponseFunction(response)
+				}
+			})
 			
 			// TODO 06: run Application.
 		}
@@ -194,13 +205,15 @@ class WS01Fragment : BaseFragment() {
 	//  - Instantiate the OkHttpClient
 	//  - Call a ".newCall(...)" function on this client
 	//  - Pass the "createGetImageRequest()" as a parameter.
-	private fun createGetImageCall(): Call = TODO()
+	private fun createGetImageCall(): Call = OkHttpClient().newCall(createGetImageRequest())
 	
 	private fun createGetImageRequest() = Request.Builder()
 		// TODO 01: Continue chaining methods to prepare a correct request:
 		//  - Add http method "get"
 		//  - "add header" with name API_KEY_HEADER and value from "getApiKey()"
 		//  - Add "url", concatenate "getBaseUrl()" with IMAGE_REQUEST_ENDPOINT.
+		.addHeader(API_KEY_HEADER, getApiKey())
+		.url(getBaseUrl() + IMAGE_REQUEST_ENDPOINT)
 		.build()
 	// endregion
 	
