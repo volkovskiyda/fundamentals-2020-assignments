@@ -27,10 +27,10 @@ class Workshop1ProfileFragment : Fragment(R.layout.fragment_workshop_1_profile) 
         initViews(view)
         setUpListeners()
 
-        viewModel.logoutState.observe(viewLifecycleOwner, { loginResult ->
-            loginResult ?: return@observe
+        viewModel.logoutState.observe(viewLifecycleOwner, { logoutResult ->
+            logoutResult ?: return@observe
 
-            when (loginResult) {
+            when (logoutResult) {
                 is LogoutResult.Loading -> setLoading(true)
                 is LogoutResult.Success -> {
                     setLoading(false)
@@ -61,7 +61,7 @@ class Workshop1ProfileFragment : Fragment(R.layout.fragment_workshop_1_profile) 
 
     private fun initViews(view: View) {
         logoutBtn = view.findViewById(R.id.fragment_workshop_1_logout_btn)
-        loader = view.findViewById(R.id.fragment_workshop_1_loader)
+        loader = view.findViewById(R.id.fragment_workshop_1_logout_loader)
     }
 
     private fun setUpListeners() {

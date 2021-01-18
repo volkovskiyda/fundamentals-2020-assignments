@@ -15,28 +15,44 @@ import kotlin.random.Random
 //  * getAllLocations(): List<Location>					- select all locations from DB;
 //  * addNewAndGetUpdated(): List<Location>				- insert one location and select all;
 //  * deleteByIdAndGetUpdated(id: Long): List<Location>	- delete one location and select all;
-class Ws03LocationsRepository(applicationContext: Context) {
+class Ws03LocationsRepository(applicationContext: Context): LocationRepository {
 	
 	private val random = Random(10)
-	
+
 	// TODO 13: Create a property with type of the "Ws03DataBase" and initialize here.
 	//  Use function from "TODO_12".
-	
+	val dataBase = Ws03DataBase.create(applicationContext)
+
 	// TODO 14: override suspend fun getAllLocations().
 	//  Call this function "withContext(Dispatchers.IO)".
 	//  Call LocationDao "getAll()" and use "toLocation(...)" to "map" list with Entities to list with Locations.
-	
+
+	override suspend fun getAllLocations(): List<Location> = withContext(Dispatchers.IO) {
+		dataBase.locationsDao.getAllLocations().map(::toLocation)
+	}
+
 	// TODO 15: override suspend fun addNewAndGetUpdated().
 	//  Call this function "withContext(Dispatchers.IO)".
 	//  Create "NewLocationRequest" from "generateNewLocationRequest()".
 	//  Convert "NewLocationRequest" to " Ws03LocationEntity" with "toEntity(...)".
 	//  Pass the entity to the LocationDao "insert(...)".
 	//  Call "getAllLocations()" in the end.
+
+	override suspend fun addNewAndGetUpdated(): List<Location> = withContext(Dispatchers.IO) {
+		val location = generateNewLocationRequest()
+		dataBase.locationsDao.insert(toEntity(location))
+		getAllLocations()
+	}
 	
 	// TODO 16: override suspend fun deleteByIdAndGetUpdated(id: Long).
 	//  Call this function "withContext(Dispatchers.IO)".
 	//  Call LocationDao "deleteById(id)" to delete location entry.
 	//  Call "getAllLocations()" in the end.
+
+	override suspend fun deleteByIdAndGetUpdated(id: Long): List<Location> = withContext(Dispatchers.IO) {
+		dataBase.locationsDao.deleteById(id)
+		getAllLocations()
+	}
 
 	private fun toEntity(location: NewLocationRequest) = Ws03LocationEntity(
 		title = location.title,

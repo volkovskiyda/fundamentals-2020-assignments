@@ -6,7 +6,7 @@ plugins {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.android.fundamentals"
@@ -43,8 +43,8 @@ dependencies {
   implementation "androidx.room:room-runtime:$room_version"
   implementation "androidx.room:room-ktx:$room_version"
   implementation "com.google.android.material:material:1.2.1"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1"
-  implementation 'androidx.preference:preference:1.1.1'
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2"
+  implementation 'androidx.preference:preference-ktx:1.1.1'
 
   kapt "androidx.room:room-compiler:$room_version"
 }
