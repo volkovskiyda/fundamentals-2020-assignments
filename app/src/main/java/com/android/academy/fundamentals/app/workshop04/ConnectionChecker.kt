@@ -8,10 +8,7 @@ object ConnectionChecker {
     // TCP/HTTP/DNS (depending on the port, 53=DNS, 80=HTTP, etc.)
     fun isOnline(): Boolean {
         return try {
-            Socket().run {
-                connect(InetSocketAddress("8.8.8.8", 53), 500)
-                close()
-            }
+            Socket().use { it.connect(InetSocketAddress("8.8.8.8", 53), 500) }
             true
         } catch (e: IOException) {
             false

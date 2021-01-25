@@ -36,7 +36,7 @@ class Ws02Fragment : Fragment() {
 	
 	// TODO 09: Replace TODO(). Initialize property as object of "ServiceConnection".
 	//  Implement both "onServiceConnected" and "onServiceDisconnected" functions.
-	private val serviceConnection: ServiceConnection = TODO()
+//	private val serviceConnection: ServiceConnection = TODO()
 		// TODO 10: Inside "onServiceConnected".
 		//  - Set "isBound" true;
 		//  - Set boundIndicatorView?.isEnabled = true;
@@ -51,7 +51,26 @@ class Ws02Fragment : Fragment() {
 		//  - Set "isBound" false;
 		//  - Set boundIndicatorView?.isEnabled = false;
 		//  - Set "service" null.
-	
+
+	private val serviceConnection: ServiceConnection = object : ServiceConnection {
+		override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+			isBound = true
+			boundIndicatorView?.isEnabled = true
+            (service as? Ws02BoundedService.Ws02Binder)
+                ?.getService().also { this@Ws02Fragment.service = it }
+				?.observableData()
+				?.observe(viewLifecycleOwner, { updateViews(it) })
+            Log.d(TAG, "onServiceConnected component:${name?.className}, iBinder:${service?.javaClass}, service:${this@Ws02Fragment.service?.javaClass}")
+		}
+
+		override fun onServiceDisconnected(name: ComponentName?) {
+            Log.d(TAG, "onServiceDisconnected component:${name?.className}")
+            isBound = false
+            boundIndicatorView?.isEnabled = false
+            service = null
+		}
+	}
+
 	private var currentAzimuth = 0f
 	
 	override fun onCreateView(
@@ -136,7 +155,8 @@ class Ws02Fragment : Fragment() {
 		//  - Pass as param intent from "getServiceIntent()";
 		//  - Pass as param "serviceConnection";
 		//  - Pass as param flag "Context.BIND_AUTO_CREATE".
-		val result = TODO()
+//		val result = TODO()
+        val result = context?.bindService(getServiceIntent(), serviceConnection, Context.BIND_AUTO_CREATE)
 		Log.d(TAG, "bindToService res:$result")
 	}
 	
@@ -151,6 +171,7 @@ class Ws02Fragment : Fragment() {
 		
 		// TODO 14: Unbind service from "context?" with unbindService(...) function.
 		//  - Pass as param "serviceConnection".
+        context?.unbindService(serviceConnection)
 	}
 	
 	// https://www.javacodegeeks.com/2013/09/android-compass-code-example.html

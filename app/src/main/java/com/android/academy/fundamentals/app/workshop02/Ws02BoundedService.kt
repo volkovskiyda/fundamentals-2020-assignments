@@ -15,6 +15,7 @@ class Ws02BoundedService : Service() {
 	// TODO 03: Add a private property "binder".
 	//  Initialize it with Binder() class created in the TODO_02.
 	//	private val ...
+	private val binder = Binder()
 	private val enableRebind = true
 	
 	private var sensorManager: Ws02SensorManager by Delegates.notNull()
@@ -28,9 +29,11 @@ class Ws02BoundedService : Service() {
 	override fun onBind(intent: Intent?): IBinder {
 		Log.d(TAG, "onBind intent:$intent")
 		// TODO 04: Start work with "registerSensors()".
+		registerSensors()
 		
 		// TODO 05: Replace TODO(). Return created "binder" property.
-		return TODO()
+//		return TODO()
+		return binder
 	}
 	
 	override fun onRebind(intent: Intent?) {
@@ -38,15 +41,18 @@ class Ws02BoundedService : Service() {
 		
 		// TODO 06: Start work with "registerSensors()".
 		//  In the other situation it could be some "continuation" work.
+		registerSensors()
 	}
 	
 	override fun onUnbind(intent: Intent?): Boolean {
 		Log.d(TAG, "onUnbind enableRebind:$enableRebind, intent:$intent")
 		
 		// TODO 07: Stop work with "unregisterSensors()".
+		unregisterSensors()
 		
 		// TODO 08: Replace TODO(). Return "enableRebind" flag.
-		return TODO()
+//		return TODO()
+		return enableRebind
 	}
 	
 	override fun onDestroy() {
@@ -70,6 +76,9 @@ class Ws02BoundedService : Service() {
 	// TODO 01: Add inner class "Ws02Binder" which is extends Binder().
 	// TODO 02: Add a public function "getService" which is returns "this@Ws02BoundedService".
 	// ... fun ...
+	inner class Ws02Binder : Binder() {
+		fun getService(): Ws02BoundedService = this@Ws02BoundedService
+	}
 	
 	companion object {
 		private const val TAG = "WS02::SERVICE"
