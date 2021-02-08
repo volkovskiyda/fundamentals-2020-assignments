@@ -21,10 +21,14 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.WorkerThread
+import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import androidx.core.graphics.drawable.IconCompat
+import androidx.core.net.toUri
+import com.example.android.people.MainActivity
 import com.example.android.people.R
 import com.example.android.people.ReplyReceiver
 
@@ -72,6 +76,13 @@ class AndroidNotifications(private val context: Context) : Notifications {
 
                 Note: Don't forget we have context in the class already
 */
+
+            notificationManagerCompat.createNotificationChannel(
+                NotificationChannelCompat.Builder(CHANNEL_NEW_MESSAGES, NotificationManagerCompat.IMPORTANCE_HIGH)
+                    .setName(context.getString(R.string.channel_new_messages))
+                    .setDescription(context.getString(R.string.channel_new_messages_description))
+                    .build()
+            )
         }
     }
 
@@ -149,6 +160,50 @@ class AndroidNotifications(private val context: Context) : Notifications {
 
 */
 
+        val icon = IconCompat.createWithContentUri(chat.contact.iconUri)
+        val contentUri = "https://android.example.com/chat/${chat.contact.id}".toUri()
+        val person = Person.Builder()
+            .setName(chat.contact.name)
+            .setIcon(icon)
+            .build()
+
+        val messagingStyle = NotificationCompat.MessagingStyle(person)
+        for (chatMessage in chat.messages) {
+            val notificationMessage = NotificationCompat.MessagingStyle.Message(
+                chatMessage.text,
+                chatMessage.timestamp,
+                if (chatMessage.isIncoming) person else null
+            )
+
+            if (chatMessage.photoUri != null)
+                notificationMessage.setData(chatMessage.photoMimeType, chatMessage.photoUri)
+
+            if (chatMessage.isNew) messagingStyle.addMessage(notificationMessage)
+            else messagingStyle.addHistoricMessage(notificationMessage)
+        }
+        messagingStyle.isGroupConversation = false
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_NEW_MESSAGES)
+            .setContentTitle(chat.contact.name)
+            .setContentText(chat.messages.last().text)
+            .setSmallIcon(R.drawable.ic_message)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setOnlyAlertOnce(true)
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    context,
+                    REQUEST_CONTENT,
+                    Intent(context, MainActivity::class.java)
+                        .setAction(Intent.ACTION_VIEW)
+                        .setData(contentUri),
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            )
+            .addReplyAction(context,contentUri)
+            .setStyle(messagingStyle)
+            .setWhen(chat.messages.last().timestamp)
+
+        notificationManagerCompat.notify(CHAT_TAG, chat.contact.id.toInt(), builder.build())
 
     }
 
@@ -161,6 +216,8 @@ class AndroidNotifications(private val context: Context) : Notifications {
                     notification ID
                     
 */
+
+        notificationManagerCompat.cancel(CHAT_TAG, chatId.toInt())
     }
 
     private fun NotificationCompat.Builder.addReplyAction(
