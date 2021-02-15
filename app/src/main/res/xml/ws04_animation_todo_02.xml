@@ -48,7 +48,7 @@
 
             <CustomAttribute
                 motion:attributeName="textColor"
-                motion:customColorValue="@color/teal_200" />
+                motion:customColorValue="@color/white" />
         </Constraint>
 
     </ConstraintSet>

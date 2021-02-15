@@ -47,11 +47,17 @@ class WS03Fragment : Fragment() {
             // TODO 01 support predictive animations
             //  override fun supportsPredictiveItemAnimations()
             //  return mPredictiveAnimationsCB.isChecked
+
+            override fun supportsPredictiveItemAnimations(): Boolean {
+                return mPredictiveAnimationsCB.isChecked
+            }
         }
         view.findViewById<CheckBox>(R.id.custom_animator).setOnCheckedChangeListener { buttonView, isChecked ->
             // TODO 02 set up custom animations for changing
             //  if checked set up for list ColorItemAnimator
             //  else DefaultItemAnimator
+
+            mList.itemAnimator = if (isChecked) ColorItemAnimator() else DefaultItemAnimator()
         }
     }
 

@@ -29,9 +29,11 @@ class WS04Fragment : Fragment(R.layout.fragment_splash) {
             if (!isTransitionToEnd) {
                 isTransitionToEnd = true
 //              TODO 00_01 to reverse transition animation call `transitionToEnd()` method from motionLayout
+                motionLayout.transitionToEnd()
             } else {
                 isTransitionToEnd = false
 //              TODO 00_02 to start transition animation call `transitionToStart()` method from motionLayout
+                motionLayout.transitionToStart()
             }
         }
     }

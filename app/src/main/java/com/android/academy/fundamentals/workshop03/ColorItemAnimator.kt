@@ -19,6 +19,8 @@ class ColorItemAnimator: DefaultItemAnimator() {
     //  override canReuseUpdatedViewHolder(...)
     //  return true value
 
+    override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder): Boolean = true
+
     override fun obtainHolderInfo(): ItemHolderInfo {
         return ColorItemHolderInfo()
     }
@@ -35,11 +37,15 @@ class ColorItemAnimator: DefaultItemAnimator() {
         // TODO 04 set up how to play background animation
         //  use playSequentially(fadeToBlack, fadeFromBlack)
 
+        bgAnim.playSequentially(fadeToBlack, fadeFromBlack)
+
         val oldTextRotate = ObjectAnimator.ofFloat(newHolder.textView, View.ROTATION_X, 0f, 90f)
         val newTextRotate = ObjectAnimator.ofFloat(newHolder.textView, View.ROTATION_X, -90f, 0f)
         val textAnim = AnimatorSet()
         // TODO 05 set up how to play text animation
         //  use playSequentially(oldTextRotate, newTextRotate)
+
+        textAnim.playSequentially(oldTextRotate, newTextRotate)
 
         oldTextRotate.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationStart(animation: Animator) {
@@ -54,6 +60,8 @@ class ColorItemAnimator: DefaultItemAnimator() {
         val changeAnim = AnimatorSet()
         // TODO 06 set up playing two animations together
         //  use playTogether(bgAnim, textAnim)
+
+        changeAnim.playTogether(bgAnim, textAnim)
         changeAnim.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 dispatchAnimationFinished(newHolder)
